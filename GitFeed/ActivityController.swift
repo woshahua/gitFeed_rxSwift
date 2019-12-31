@@ -34,132 +34,51 @@ import RxCocoa
 import Kingfisher
 
 class ActivityController: UITableViewController {
-  private let repo = "ReactiveX/RxSwift"
-
-  private let events = BehaviorRelay<[Event]>(value: [])
-  private let bag = DisposeBag()
-  
-  private let eventsFileURL = cachedFileURL("events.json")
-  private let modifiedFileURL = cachedFileURL("modified.txt")
-  private let lastModified = BehaviorRelay<String?>(value: nil)
+  private let action = ActivityActionCreator()
 
   override func viewDidLoad() {
     super.viewDidLoad()
-    title = repo
-
+    title = "repo events"
+    
     self.refreshControl = UIRefreshControl()
-    let refreshControl = self.refreshControl!
-
+    guard let refreshControl = self.refreshControl else { return }
     refreshControl.backgroundColor = UIColor(white: 0.98, alpha: 1.0)
     refreshControl.tintColor = UIColor.darkGray
     refreshControl.attributedTitle = NSAttributedString(string: "Pull to refresh")
     refreshControl.addTarget(self, action: #selector(refresh), for: .valueChanged)
     
-    let decoder = JSONDecoder()
-    if let eventsData = try? Data(contentsOf: eventsFileURL) ,
-      let persistedEvents = try? decoder.decode([Event].self, from: eventsData) {
-      events.accept(persistedEvents)
-    }
-
-    if let lastModifiedString = try? String(contentsOf: modifiedFileURL, encoding: .utf8) {
-      lastModified.accept(lastModifiedString)
-    }
+    action.fetchPersistEvents()
     refresh()
   }
 
   @objc func refresh() {
+    // why run in global thread
     DispatchQueue.global(qos: .default).async { [weak self] in
-      guard let self = self else { return }
-      self.fetchEvents(repo: self.repo)
-    }
-  }
-
-  func fetchEvents(repo: String) {
-    // set a list of string to Observable
-    let response = Observable.from([repo])
-      .map { urlString -> URL in
-        return URL(string: "https://api.github.com/repos/\(urlString)/events")!
-    }.map { [weak self] url -> URLRequest in
-      var request = URLRequest(url: url)
-      if let modifiedHeader = self?.lastModified.value {
-        request.addValue(modifiedHeader, forHTTPHeaderField: "Last-Modified")
-      }
-      return request
-    }.flatMap { reuquest -> Observable<(response: HTTPURLResponse, data: Data)> in
-      return URLSession.shared.rx.response(request: reuquest)
-    }.share(replay: 1)
-    
-    response.filter { response, _ in
-      return 200..<300 ~= response.statusCode
-    }
-    .map { _, data -> [Event] in
-      let decoder = JSONDecoder()
-      let events = try? decoder.decode([Event].self, from: data)
-      return events ?? []
-    }
-    .filter { objects in
-      return !objects.isEmpty
-    }.subscribe(onNext: { [weak self] newEvents in
-      self?.processEvents(newEvents)
-      }).disposed(by: bag)
-    
-    
-    // seconde subscribtion
-    response.filter { response, _ in
-        return 200..<400 ~= response.statusCode
-      }
-    .flatMap { response, _ -> Observable<String> in
-      guard let value = response.allHeaderFields["Last-Modified"] as? String else {
-        return Observable.empty()
-      }
-      return Observable.just(value)
-    }.subscribe(onNext: { [weak self] modifiedHeader in
       guard let strongSelf = self else { return }
-      strongSelf.lastModified.accept(modifiedHeader)
-      // ???
-      try? modifiedHeader.write(to: strongSelf.modifiedFileURL, atomically: true, encoding: .utf8)
-      }).disposed(by: bag)
+      strongSelf.fetchEvent()
+    }
   }
   
-  func processEvents(_ newEvents: [Event]) {
-    var updateEvents = newEvents + events.value
-    if updateEvents.count > 50 {
-      updateEvents = [Event](updateEvents.prefix(upTo: 50))
-    }
-    
-    events.accept(updateEvents)
+  func fetchEvent() {
+    action.fetchEvents()
     DispatchQueue.main.async {
       self.tableView.reloadData()
       self.refreshControl?.endRefreshing()
-    }
-    
-    let encoder = JSONEncoder()
-    if let eventData = try? encoder.encode(updateEvents) {
-      try? eventData.write(to: eventsFileURL, options: .atomicWrite)
     }
   }
 
   // MARK: - Table Data Source
   override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-    return events.value.count
+    return action.numberOfSections()
   }
 
   override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-    let event = events.value[indexPath.row]
+    let event = action.event(at: indexPath.row)
 
-    let cell = tableView.dequeueReusableCell(withIdentifier: "Cell")!
+    let cell = tableView.dequeueReusableCell(withIdentifier: "Cell")! 
     cell.textLabel?.text = event.actor.name
     cell.detailTextLabel?.text = event.repo.name + ", " + event.action.replacingOccurrences(of: "Event", with: "").lowercased()
     cell.imageView?.kf.setImage(with: event.actor.avatar, placeholder: UIImage(named: "blank-avatar"))
     return cell
   }
-}
-
-func cachedFileURL(_ filenname: String) -> URL {
-  // ???
-  return FileManager.default
-    // ???
-    .urls(for: .cachesDirectory, in: .allDomainsMask)
-  .first!
-  .appendingPathComponent(filenname)
 }

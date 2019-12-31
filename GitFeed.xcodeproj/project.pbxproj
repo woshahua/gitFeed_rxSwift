@@ -15,6 +15,10 @@
 		9C83327F1DF73BA90067DC80 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9C83327D1DF73BA90067DC80 /* LaunchScreen.storyboard */; };
 		9C8332871DF73BBD0067DC80 /* Podfile in Resources */ = {isa = PBXBuildFile; fileRef = 9C8332861DF73BBD0067DC80 /* Podfile */; };
 		9CE37EC71DF73EE300E4E310 /* Event.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CE37EC61DF73EE300E4E310 /* Event.swift */; };
+		BDE5677D23B9A74900069049 /* AcitivityStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDE5677C23B9A74900069049 /* AcitivityStore.swift */; };
+		BDE5677F23B9A7A300069049 /* AcitivityState.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDE5677E23B9A7A300069049 /* AcitivityState.swift */; };
+		BDE5678123B9A88900069049 /* ActivityAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDE5678023B9A88900069049 /* ActivityAction.swift */; };
+		BDE5678323B9DFD400069049 /* ActivityActionCreator.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDE5678223B9DFD400069049 /* ActivityActionCreator.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -30,6 +34,10 @@
 		9C8332861DF73BBD0067DC80 /* Podfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Podfile; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		9CE37EC61DF73EE300E4E310 /* Event.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Event.swift; sourceTree = "<group>"; };
 		B81F19331966324F60D0BA00 /* Pods-GitFeed.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-GitFeed.release.xcconfig"; path = "Target Support Files/Pods-GitFeed/Pods-GitFeed.release.xcconfig"; sourceTree = "<group>"; };
+		BDE5677C23B9A74900069049 /* AcitivityStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AcitivityStore.swift; sourceTree = "<group>"; };
+		BDE5677E23B9A7A300069049 /* AcitivityState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AcitivityState.swift; sourceTree = "<group>"; };
+		BDE5678023B9A88900069049 /* ActivityAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityAction.swift; sourceTree = "<group>"; };
+		BDE5678223B9DFD400069049 /* ActivityActionCreator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityActionCreator.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -50,7 +58,6 @@
 				485CAE057C83BFFA5191B500 /* Pods-GitFeed.debug.xcconfig */,
 				B81F19331966324F60D0BA00 /* Pods-GitFeed.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -91,6 +98,10 @@
 			children = (
 				9C30C3F71E06FC3900C6C510 /* Assets */,
 				9C8332761DF73BA90067DC80 /* ActivityController.swift */,
+				BDE5677C23B9A74900069049 /* AcitivityStore.swift */,
+				BDE5678223B9DFD400069049 /* ActivityActionCreator.swift */,
+				BDE5678023B9A88900069049 /* ActivityAction.swift */,
+				BDE5677E23B9A7A300069049 /* AcitivityState.swift */,
 				9CE37EC61DF73EE300E4E310 /* Event.swift */,
 				9C8332741DF73BA90067DC80 /* AppDelegate.swift */,
 			);
@@ -148,6 +159,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 				Base,
 			);
@@ -234,7 +246,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				9C8332771DF73BA90067DC80 /* ActivityController.swift in Sources */,
+				BDE5677F23B9A7A300069049 /* AcitivityState.swift in Sources */,
+				BDE5678123B9A88900069049 /* ActivityAction.swift in Sources */,
 				9CE37EC71DF73EE300E4E310 /* Event.swift in Sources */,
+				BDE5677D23B9A74900069049 /* AcitivityStore.swift in Sources */,
+				BDE5678323B9DFD400069049 /* ActivityActionCreator.swift in Sources */,
 				9C8332751DF73BA90067DC80 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
